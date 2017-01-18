@@ -4,7 +4,7 @@ import seq = require('promisequence')
 import RegClient = require('npm-registry-client')
 import logger from 'pnpm-logger'
 import cloneDeep = require('lodash.clonedeep')
-import {PnpmOptions, StrictPnpmOptions, Dependencies} from '../types'
+import {PnpmOptions, StrictPnpmOptions, Dependencies, LifecycleHooks} from '../types'
 import createGot from '../network/got'
 import getContext, {PnpmContext} from './getContext'
 import installMultiple, {InstalledPackage} from '../install/installMultiple'
@@ -35,6 +35,7 @@ export type InstallContext = {
   installationSequence: string[],
   fetchLocks: CachedPromises<void>,
   graph: Graph,
+  lifecycle: LifecycleHooks,
   shrinkwrap: Shrinkwrap,
   resolutionLinked: CachedPromises<void>,
   installed: Set<string>,
@@ -87,6 +88,7 @@ async function installInContext (installType: string, packagesToInstall: Depende
       engineStrict: opts.engineStrict,
       nodeVersion: opts.nodeVersion,
       preserveSymlinks: opts.preserveSymlinks,
+      lifecycle: opts.lifecycle,
       got: createGot(client, {
         cachePath: ctx.cache,
         cacheTTL: opts.cacheTTL
@@ -208,6 +210,7 @@ async function createInstallCmd (opts: StrictPnpmOptions, graph: Graph, shrinkwr
     fetchLocks: {},
     installLocks: {},
     installs: {},
+    lifecycle: opts.lifecycle,
     graph,
     shrinkwrap,
     resolutionLinked: {},

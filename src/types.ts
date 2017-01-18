@@ -1,4 +1,26 @@
 import {ReporterType} from './reporter'
+import {PackageSpec, ResolveOptions, ResolveResult} from './resolve';
+
+export type LifecycleHooks = {
+
+  /**
+   * Executes before the pnpm's default resolution takes action.
+   *
+   * If this method returns a resolution then it is used, otherwise pnpm's
+   * default resolution algorithm will be used.
+   */
+  packageWillResolve?: (spec: PackageSpec, opts: ResolveOptions) => Promise<ResolveResult | null>,
+
+  // TODO: add more lifecycle hooks
+  //
+  // packageDidResolve
+  //
+  // packageWillFetch
+  // packageDidFetch
+  //
+  // packageWillInstall
+  // packageDidInstall
+};
 
 export type PnpmOptions = {
   cwd?: string,
@@ -21,6 +43,8 @@ export type PnpmOptions = {
   engineStrict?: boolean,
   nodeVersion?: string,
   preserveSymlinks?: boolean,
+
+  lifecycle: LifecycleHooks,
 
   // proxy
   proxy?: string,
@@ -61,6 +85,8 @@ export type StrictPnpmOptions = {
   engineStrict: boolean,
   nodeVersion: string,
   preserveSymlinks: boolean,
+
+  lifecycle: LifecycleHooks,
 
   // proxy
   proxy?: string,
